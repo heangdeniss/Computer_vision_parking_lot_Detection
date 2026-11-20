@@ -227,7 +227,7 @@ cd ..
 
 ## Dataset
 
-Source: [Roboflow — parking-space-bxjkf-jus8n, v1](https://universe.roboflow.com/denischan/parking-space-bxjkf-jus8n/dataset/1), licensed **CC BY 4.0**. The dataset folder is not committed; place the export at `parking-space.v1i.yolov11/` before training or evaluation.
+Source: [Roboflow workspace — parking-space-bxjkf-jus8n, v1](https://app.roboflow.com/denischan/parking-space-bxjkf-jus8n/1) ([public dataset page](https://universe.roboflow.com/denischan/parking-space-bxjkf-jus8n/dataset/1)), licensed **CC BY 4.0**. The dataset folder is not committed; place the export at `parking-space.v1i.yolov11/` before training or evaluation.
 
 ```bash
 unzip -o parking-space.v1i.yolov11.zip -d parking-space.v1i.yolov11
@@ -409,7 +409,7 @@ Timings were measured on the RTX 3050 Laptop GPU with 640 px inputs. CPU inferen
 
 ## Attribution
 
-- Dataset: [Roboflow parking-space (v1)](https://universe.roboflow.com/denischan/parking-space-bxjkf-jus8n/dataset/1) — CC BY 4.0.
+- Dataset: [Roboflow parking-space (v1, workspace)](https://app.roboflow.com/denischan/parking-space-bxjkf-jus8n/1) / [public page](https://universe.roboflow.com/denischan/parking-space-bxjkf-jus8n/dataset/1) — CC BY 4.0.
 - Model architecture and training code follow [Ultralytics YOLO11](https://docs.ultralytics.com/models/yolo11/) — AGPL-3.0.
 - Frontend: React 18 and Vite 5 (MIT).
 - Python stack: Ultralytics 8.4.215, PyTorch 2.15.0, OpenCV 5.1.0.95, FastAPI 0.165.0, Uvicorn 0.54.0, pillow-heif 1.8.1.

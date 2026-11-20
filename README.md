@@ -130,14 +130,20 @@ Computer_vision_parking_lot_Detection/
 │   ├── inspect_model.py            # layer table, GFLOPs, weight-transfer check
 │   ├── train.py                    # build → transfer → fine-tune (--dry-run)
 │   └── evaluate.py                 # val/test mAP and per-class metrics
-├── server/
-│   └── app.py                      # FastAPI inference + static UI host
+├── server/                         # FastAPI application package
+│   ├── app.py                      # routes + static UI host
+│   ├── config.py                   # paths, thresholds, colors
+│   ├── inference.py                # detector, decoding, annotation, formatting
+│   └── video.py                    # frame sampling for video analysis
 ├── frontend/
-│   ├── src/App.jsx                 # React UI (images, video, realtime)
+│   ├── src/App.jsx                 # composition and application state
+│   ├── src/components/             # UploadZone, Controls, cards, timeline, live view
+│   ├── src/hooks/useLiveDetection.js
+│   ├── src/lib/                    # API client, rendering helpers, constants
 │   ├── src/styles.css              # dark responsive styling
 │   ├── vite.config.js              # /api proxy + automatic API startup
-│   ├── package.json
 │   └── dist/                       # prebuilt UI served by FastAPI
+├── tests/test_inference.py         # stdlib self-checks for pure helpers
 ├── runs/detect/parking_yolo11s/
 │   └── weights/best.pt             # deployed checkpoint
 └── .gitignore
@@ -293,6 +299,12 @@ yolo detect train model=yolo11s.pt data=parking-space.v1i.yolov11/data.yaml \
 `src/evaluate.py` reports overall mAP50/mAP50-95, precision and recall, plus per-class precision, recall, AP, and confusion-matrix recall. Use `--split val` for model selection and reserve `test` for the final report. Plots and raw predictions are written under `runs/detect/eval/`.
 
 Reproduce the analysis figures with the notebook `plot_results.ipynb`, which reads `runs/detect/parking_yolo11s/results.csv` and writes PNGs to `analysis_plots/`.
+
+Self-checks for the pure inference helpers (no model or server required):
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+```
 
 ---
 

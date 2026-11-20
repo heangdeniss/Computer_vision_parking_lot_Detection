@@ -1,0 +1,17 @@
+# Verified environment: Python 3.13, CUDA 13.2, RTX 3050 Laptop (4 GB)
+# Install with: pip install -r requirements.txt
+
+ultralytics==8.4.215
+ultralytics-thop==2.2.5   # needed by model.info() for GFLOPs
+opencv-python==5.1.0.95
+PyYAML==6.0.3             # reads configs/*.yaml and data.yaml
+torch==2.15.0
+torchvision==0.29.2
+ipykernel==7.4.0            # only needed to run the results notebook in .venv
+fastapi==0.165.0            # inference API used by the React frontend
+uvicorn==0.54.0
+python-multipart==0.0.34    # image uploads
+pillow-heif==1.8.1          # HEIC/HEIF photo support
+
+# For a different CUDA version, install torch/torchvision from https://pytorch.org first,
+# then run pip install -r requirements.txt (pip will keep the already-installed CUDA build).

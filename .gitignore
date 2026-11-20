@@ -1,0 +1,26 @@
+# Local environments and dependencies
+.venv/
+frontend/node_modules/
+__pycache__/
+*.py[cod]
+
+# Raw data (download separately — see README)
+parking-space.v1i.yolov11/
+unlabeled_images/
+input test image/
+
+# Pretrained base checkpoints (re-downloadable)
+yolo11s.pt
+yolo11m.pt
+src/*.pt
+
+# Training outputs — keep only the deployed checkpoint
+runs/**
+!runs/detect/
+!runs/detect/parking_yolo11s/
+!runs/detect/parking_yolo11s/weights/
+!runs/detect/parking_yolo11s/weights/best.pt
+
+# Misc
+*.log
+.DS_Store

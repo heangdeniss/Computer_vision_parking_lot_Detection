@@ -7,7 +7,6 @@ __pycache__/
 # Raw data (download separately — see README)
 parking-space.v1i.yolov11/
 unlabeled_images/
-input test image/
 
 # Pretrained base checkpoints (re-downloadable)
 yolo11s.pt

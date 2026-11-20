@@ -120,7 +120,7 @@ With the UI's default confidence of 0.25, the test-set confusion matrix (rows = 
 Computer_vision_parking_lot_Detection/
 ├── README.md                       # this document
 ├── architecture.md                 # architecture study + training process record
-├── improve.md                      # original improvement notes
+├── input test image/               # sample photos and videos for manual testing
 ├── plot_results.ipynb              # training curves from results.csv
 ├── requirements.txt                # pinned Python dependencies
 ├── configs/

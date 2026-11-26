@@ -2,10 +2,8 @@
 """Fine-tune YOLOv11 on the parking-space dataset.
 
 Example:
-    python src/train.py --weights yolo11s.pt
-
-Weights are transferred from the pretrained checkpoint; the class-score branch is
-re-initialized for the 2 parking classes. Nothing runs unless you execute this file.
+    .venv/bin/python src/yolo/train.py --dry-run
+    .venv/bin/python src/yolo/train.py --weights yolo11s.pt
 """
 from __future__ import annotations
 
@@ -13,7 +11,7 @@ import argparse
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from ultralytics import YOLO
@@ -42,15 +40,13 @@ def main() -> None:
 
     if cfg["nc"] != data["nc"]:
         raise SystemExit(f"nc mismatch: model config has {cfg['nc']}, dataset has {data['nc']}")
-    print(f"Dataset: {args.data}")
-    print(f"  nc={data['nc']} names={data['names']} (0=empty, 1=occupied)")
-    print(f"Architecture: {args.config} (nc={cfg['nc']}, scale=s)")
-    print(f"Hyperparameters: {args.hyp} ({len(hyp)} overrides)")
+    print(f"Dataset: {args.data} | nc={data['nc']} names={data['names']}")
+    print(f"Architecture: {args.config} | Hyperparameters: {args.hyp} ({len(hyp)} overrides)")
     print(f"Pretrained weights: {args.weights}")
 
     model = YOLO(str(args.config), verbose=False)
     model.load(args.weights)
-    model.model.names = data["names"]  # keep class names consistent for plots and cls-head remap
+    model.model.names = data["names"]
 
     if args.dry_run:
         print("\nDry run: model built and weights transferred successfully. Training not started.")

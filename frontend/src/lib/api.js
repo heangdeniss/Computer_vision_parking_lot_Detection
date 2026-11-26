@@ -5,3 +5,11 @@ export async function postForm(path, body) {
   if (!response.ok) throw new Error(data.error || 'request failed')
   return data
 }
+
+/** GET a JSON endpoint and unwrap errors. */
+export async function getJson(path) {
+  const response = await fetch(path)
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error || 'request failed')
+  return data
+}

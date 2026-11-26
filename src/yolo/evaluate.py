@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Evaluate a trained parking-space checkpoint on the test (or val) split.
+"""Evaluate a trained YOLOv11 checkpoint on the test (or val) split.
 
 Example:
-    python src/evaluate.py --weights runs/detect/parking_yolo11s/weights/best.pt --split test
+    .venv/bin/python src/yolo/evaluate.py --weights runs/detect/parking_yolo11s/weights/best.pt --split test
 """
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import argparse
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from ultralytics import YOLO
@@ -18,7 +18,7 @@ from ultralytics import YOLO
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--weights", required=True, help="trained checkpoint (.pt)")
+    p.add_argument("--weights", default=str(ROOT / "runs/detect/parking_yolo11s/weights/best.pt"))
     p.add_argument("--data", type=Path, default=ROOT / "parking-space.v1i.yolov11/data.yaml")
     p.add_argument("--split", default="test", choices=["test", "val", "train"])
     p.add_argument("--imgsz", type=int, default=640)
@@ -36,12 +36,12 @@ def main() -> None:
 
     names = metrics.names
     print("\n" + "=" * 78)
-    print(f"Evaluation: {args.weights} | split={args.split} | {args.data}")
+    print(f"Evaluation (YOLOv11): {args.weights} | split={args.split}")
     print("=" * 78)
     print(f"Overall  mAP50={metrics.box.map50:.4f}  mAP50-95={metrics.box.map:.4f}  "
           f"precision={metrics.box.mp:.4f}  recall={metrics.box.mr:.4f}")
 
-    print("\nPer-class metrics (class ids: 0 = empty, 1 = occupied)")
+    print("\nPer-class metrics (0 = empty, 1 = occupied)")
     print(f"{'id':>2}  {'class':<12} {'P':>7} {'R':>7} {'mAP50':>8} {'mAP50-95':>9} {'CM recall':>10} {'instances':>10}")
     print("-" * 78)
     cm = getattr(metrics.confusion_matrix, "matrix", None)

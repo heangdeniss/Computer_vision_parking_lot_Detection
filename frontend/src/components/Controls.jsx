@@ -1,11 +1,24 @@
-import { STRIDES } from '../lib/constants'
+import { MODEL_MODES, STRIDES } from '../lib/constants'
 
 export default function Controls({
-  tab, conf, stride, realtime, live, loading, canDetect,
-  onConf, onStride, onRealtime, onDetect, onClear,
+  tab, model, hasFasterRcnn, conf, stride, realtime, live, loading, canDetect,
+  onModel, onConf, onStride, onRealtime, onClear,
 }) {
   return (
     <div className="controls">
+      <label className="field">
+        Model
+        <select value={model} onChange={(e) => onModel(e.target.value)} disabled={live}>
+          {MODEL_MODES.map((opt) => {
+            const unavailable = !hasFasterRcnn && opt.value !== 'yolo11'
+            return (
+              <option key={opt.value} value={opt.value} disabled={unavailable}>
+                {opt.label}{unavailable ? ' (not trained yet)' : ''}
+              </option>
+            )
+          })}
+        </select>
+      </label>
       <label className="slider">
         Confidence <strong>{conf.toFixed(2)}</strong>
         <input type="range" min="0.05" max="0.9" step="0.05" value={conf}

@@ -1,4 +1,4 @@
-"""Small self-checks for the pure inference helpers (no model or server needed)."""
+"""Unit tests for server media and formatting helpers (no model weights needed)."""
 import base64
 import io
 import unittest
@@ -6,10 +6,11 @@ import unittest
 import numpy as np
 from PIL import Image
 
-from server.inference import counts_of, draw_boxes, jpeg_url, load_image
+from server.detectors import counts_of
+from server.media import decode_frame_bgr, draw_boxes, jpeg_url, load_image
 
 
-class InferenceHelpersTest(unittest.TestCase):
+class ServerHelpersTest(unittest.TestCase):
     def setUp(self):
         self.image = Image.new("RGB", (200, 100), (255, 255, 255))
         buffer = io.BytesIO()
@@ -20,6 +21,10 @@ class InferenceHelpersTest(unittest.TestCase):
         image = load_image(self.raw)
         self.assertEqual((image.width, image.height), (200, 100))
 
+    def test_decode_frame_bgr(self):
+        bgr = decode_frame_bgr(self.raw)
+        self.assertEqual(bgr.shape, (100, 200, 3))
+
     def test_jpeg_url(self):
         url = jpeg_url(self.image)
         self.assertTrue(url.startswith("data:image/jpeg;base64,"))
@@ -27,8 +32,7 @@ class InferenceHelpersTest(unittest.TestCase):
 
     def test_counts_of(self):
         detections = [{"class": "empty"}, {"class": "empty"}, {"class": "occupied"}]
-        self.assertEqual(counts_of(detections, ["empty", "occupied"]),
-                         {"empty": 2, "occupied": 1})
+        self.assertEqual(counts_of(detections, ["empty", "occupied"]), {"empty": 2, "occupied": 1})
 
     def test_draw_boxes_uses_green_and_red(self):
         detections = [

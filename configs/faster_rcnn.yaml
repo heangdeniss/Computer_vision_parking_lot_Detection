@@ -1,0 +1,36 @@
+# Fine-tuning hyperparameters for Faster R-CNN on the same YOLO parking-space dataset
+# (parking-space.v1i.yolov11/data.yaml).
+# Conservative augmentation mirrors configs/train_hyp.yaml: keep horizontal flips and mild
+# color jitter, avoid rotation/shear/perspective that would distort parking-stall geometry.
+
+# --- model ---
+backbone: resnet50_fpn_v2        # resnet50_fpn_v2 | resnet50_fpn | mobilenet_v3_large_fpn | mobilenet_v3_large_320_fpn
+min_size: 640                    # matches YOLOv11 640px input scale
+max_size: 800
+box_nms_thresh: 0.6              # matches YOLOv11 IOU=0.6
+box_detections_per_img: 300      # allow dense parking lots (>100 spaces)
+
+# --- optimization ---
+optimizer: AdamW
+lr: 0.00015
+min_lr: 0.000005
+weight_decay: 0.0005
+warmup_epochs: 2
+grad_clip_norm: 10.0
+
+# --- schedule / runtime ---
+epochs: 25
+batch: 2                         # fits safely in 4 GB VRAM with AMP FP16
+grad_accum: 4                    # effective batch size = 8 (matches YOLOv11 batch=8)
+workers: 4
+patience: 10                     # early stopping on validation mAP50-95
+amp: true
+seed: 42
+
+# --- augmentation ---
+fliplr: 0.5
+color_jitter:
+  brightness: 0.25
+  contrast: 0.25
+  saturation: 0.4
+  hue: 0.015

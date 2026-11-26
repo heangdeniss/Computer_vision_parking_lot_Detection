@@ -1,25 +1,42 @@
-# Local environments and dependencies
+# --- Python & local environments ---
 .venv/
-frontend/node_modules/
+venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
 
-# Raw data (download separately — see README)
+# --- Frontend dependencies ---
+frontend/node_modules/
+
+# --- Datasets & raw media (download separately — see README) ---
 parking-space.v1i.yolov11/
 unlabeled_images/
+analysis_plots/
 
-# Pretrained base checkpoints (re-downloadable)
-yolo11s.pt
-yolo11m.pt
-src/*.pt
+# --- Pretrained & large model weights (GitHub has a 100 MB file limit) ---
+*.pt
+*.pth
+*.onnx
 
-# Training outputs — keep only the deployed checkpoint
+# --- Training outputs — keep only the small YOLOv11 checkpoint (18 MB) ---
+# Faster R-CNN best.pt (~166 MB) exceeds GitHub's 100 MB limit; train locally
+# with `src/faster_rcnn/train.py` or publish via GitHub Releases / Git LFS.
 runs/**
 !runs/detect/
 !runs/detect/parking_yolo11s/
 !runs/detect/parking_yolo11s/weights/
 !runs/detect/parking_yolo11s/weights/best.pt
 
-# Misc
+# --- Graphify local build caches (keep graph.json, graph.html, GRAPH_REPORT.md) ---
+graphify-out/cache/
+graphify-out/.graphify_*
+graphify-out/manifest.json
+
+# --- Editor, OS & misc ---
+.vscode/
+.idea/
 *.log
 .DS_Store
+Thumbs.db

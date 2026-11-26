@@ -1,0 +1,13 @@
+services:
+  parking-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: parking-lot-detector:latest
+    container_name: parking-lot-detector
+    ports:
+      - "8000:8000"
+    environment:
+      YOLO_WEIGHTS: /app/runs/detect/parking_yolo11s/weights/best.pt
+      FASTER_RCNN_WEIGHTS: /app/runs/faster_rcnn/parking_frcnn/weights/best.pt
+    restart: unless-stopped

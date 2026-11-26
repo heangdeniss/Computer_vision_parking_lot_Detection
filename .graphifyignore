@@ -1,0 +1,17 @@
+# Ignore large datasets, model outputs, tool metadata, and generated bundles
+.venv/
+.serena/
+.agents/
+frontend/node_modules/
+frontend/dist/
+parking-space.v1i.yolov11/
+unlabeled_images/
+input test image/
+runs/
+*.pt
+*.pth
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.heic

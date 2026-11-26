@@ -5,11 +5,13 @@ import LiveView from './components/LiveView'
 import UploadZone from './components/UploadZone'
 import VideoTimeline from './components/VideoTimeline'
 import { useLiveDetection } from './hooks/useLiveDetection'
-import { postForm } from './lib/api'
+import { getJson, postForm } from './lib/api'
 import { HEIC } from './lib/constants'
 
 export default function App() {
   const [tab, setTab] = useState('images')
+  const [model, setModel] = useState('both')
+  const [hasFasterRcnn, setHasFasterRcnn] = useState(true)
   const [files, setFiles] = useState([])
   const [previews, setPreviews] = useState([])
   const [video, setVideo] = useState(null)
@@ -25,7 +27,9 @@ export default function App() {
   const dragDepth = useRef(0)
   const blobUrls = useRef(new Set())
   const inputRef = useRef(null)
-  const { videoRef, canvasRef, live, stats: liveStats, start, stop } = useLiveDetection(conf, video)
+  const {
+    videoRef, canvasRef, compareCanvasRef, live, stats: liveStats, start, stop,
+  } = useLiveDetection(conf, video, model)
 
   function releaseUrls() {
     blobUrls.current.forEach((url) => URL.revokeObjectURL(url))
@@ -34,11 +38,29 @@ export default function App() {
 
   useEffect(() => () => releaseUrls(), [])
 
+  useEffect(() => {
+    getJson('/api/health')
+      .then((info) => {
+        const available = Boolean(info?.models?.faster_rcnn?.available)
+        setHasFasterRcnn(available)
+        if (!available) setModel('yolo11')
+      })
+      .catch(() => {})
+  }, [])
+
   function switchTab(next) {
     if (live) stop()
     setTab(next)
     setError('')
     setLoading(false)
+  }
+
+  function changeModel(next) {
+    if (live) stop()
+    setModel(next)
+    setImages(null)
+    setVideoResult(null)
+    setError('')
   }
 
   function clear() {
@@ -133,6 +155,7 @@ export default function App() {
     const body = new FormData()
     files.forEach((file) => body.append('files', file))
     body.append('conf', String(conf))
+    body.append('model', model)
     try {
       setImages((await postForm('/api/predict', body)).results)
     } catch (err) {
@@ -150,6 +173,7 @@ export default function App() {
     body.append('file', video)
     body.append('conf', String(conf))
     body.append('stride', String(stride))
+    body.append('model', model)
     try {
       setVideoResult(await postForm('/api/video', body))
       setFrame(0)
@@ -181,16 +205,20 @@ export default function App() {
   }
 
   const hint = tab === 'images'
-    ? 'Drop or add multiple images in one go — they are inferred in a single optimized batch. Use confidence to trade missed spaces against false alarms.'
+    ? model === 'both'
+      ? 'Side-by-side mode runs YOLOv11 and Faster R-CNN on the same uploaded images so you can compare counts, boxes, and latency directly.'
+      : 'Drop or add multiple images in one go — they are inferred in a single optimized batch. Use confidence to trade missed spaces against false alarms.'
     : realtime
-      ? 'Live mode draws boxes on each frame as it plays. Uses the uploaded video if one is selected, otherwise the webcam (allow camera access).'
+      ? 'Live mode draws boxes on each frame as it plays (supports single model or dual side-by-side canvases). Uses the uploaded video if selected, otherwise the webcam.'
       : 'Every Nth frame is detected in batches; click a frame below to inspect it. Cap is 240 frames per video.'
+
+  const showingCompareCards = Boolean(images?.length && images[0]?.models)
 
   return (
     <main>
       <header>
         <h1>Parking occupancy detector</h1>
-        <p>Upload images or a video to count empty and occupied spaces with YOLOv11.</p>
+        <p>Compare YOLOv11 and Faster R-CNN side by side on images, video timelines, and live camera streams.</p>
       </header>
 
       <nav className="tabs" aria-label="Input type">
@@ -215,12 +243,15 @@ export default function App() {
         />
         <Controls
           tab={tab}
+          model={model}
+          hasFasterRcnn={hasFasterRcnn}
           conf={conf}
           stride={stride}
           realtime={realtime}
           live={live}
           loading={loading}
           canDetect={tab === 'images' ? files.length > 0 : (realtime || Boolean(video))}
+          onModel={changeModel}
           onConf={setConf}
           onStride={setStride}
           onRealtime={(value) => { if (live) stop(); setRealtime(value) }}
@@ -232,7 +263,7 @@ export default function App() {
       {error && <p className="error">{error}</p>}
 
       {tab === 'images' && files.length > 0 && (
-        <div className="grid">
+        <div className={showingCompareCards ? 'grid compare-list' : 'grid'}>
           {files.map((file, index) => (
             <ImageCard key={`${file.name}-${index}`}
               file={file}
@@ -244,7 +275,13 @@ export default function App() {
       )}
 
       {tab === 'video' && live && (
-        <LiveView name={video ? video.name : 'webcam'} canvasRef={canvasRef} stats={liveStats} />
+        <LiveView
+          name={video ? video.name : 'webcam'}
+          model={model}
+          canvasRef={canvasRef}
+          compareCanvasRef={compareCanvasRef}
+          stats={liveStats}
+        />
       )}
 
       {tab === 'video' && videoResult && (

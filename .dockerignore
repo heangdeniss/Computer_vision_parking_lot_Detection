@@ -1,0 +1,36 @@
+# Exclude local envs, datasets, tool caches, and build artifacts from Docker context
+.git
+.gitignore
+.gitattributes
+.graphifyignore
+.venv
+.agents
+.serena
+graphify-out
+__pycache__
+*.py[cod]
+*.log
+.DS_Store
+
+# Rebuilt cleanly inside multi-stage Dockerfile
+frontend/node_modules
+frontend/dist
+
+# Datasets, raw test media, and pretrained base weights
+parking-space.v1i.yolov11
+unlabeled_images
+input test image
+yolo11s.pt
+yolo11m.pt
+plot_results.ipynb
+
+# Exclude training logs/plots, keep only the two deployed checkpoints
+runs/**
+!runs/detect
+!runs/detect/parking_yolo11s
+!runs/detect/parking_yolo11s/weights
+!runs/detect/parking_yolo11s/weights/best.pt
+!runs/faster_rcnn
+!runs/faster_rcnn/parking_frcnn
+!runs/faster_rcnn/parking_frcnn/weights
+!runs/faster_rcnn/parking_frcnn/weights/best.pt

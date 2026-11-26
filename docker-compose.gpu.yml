@@ -1,0 +1,14 @@
+# Override for NVIDIA GPU acceleration (requires native Docker Engine + nvidia-container-toolkit):
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build
+services:
+  parking-detector:
+    build:
+      args:
+        TORCH_INDEX_URL: ""
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

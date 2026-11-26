@@ -30,10 +30,8 @@ runs/faster_rcnn/
 !runs/detect/parking_yolo11s/weights/
 !runs/detect/parking_yolo11s/weights/best.pt
 
-# --- Graphify local build caches (keep graph.json, graph.html, GRAPH_REPORT.md) ---
-graphify-out/cache/
-graphify-out/.graphify_*
-graphify-out/manifest.json
+# --- Graphify generated knowledge graph ---
+graphify-out/
 
 # --- Editor, OS & misc ---
 .vscode/

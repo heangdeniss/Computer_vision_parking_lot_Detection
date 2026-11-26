@@ -24,6 +24,7 @@ analysis_plots/
 # Faster R-CNN best.pt (~166 MB) exceeds GitHub's 100 MB limit; train locally
 # with `src/faster_rcnn/train.py` or publish via GitHub Releases / Git LFS.
 runs/**
+runs/faster_rcnn/
 !runs/detect/
 !runs/detect/parking_yolo11s/
 !runs/detect/parking_yolo11s/weights/
